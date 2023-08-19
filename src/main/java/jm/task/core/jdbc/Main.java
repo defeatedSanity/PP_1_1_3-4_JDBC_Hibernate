@@ -1,24 +1,21 @@
 package jm.task.core.jdbc;
-
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.sql.Statement;
+import jm.task.core.jdbc.service.UserServiceImpl;
 
 public class Main {
-    public static void main(String[] args) throws SQLException, ClassNotFoundException {
-        String userName = "root";
-        String password ="52826552";
-        String connectionUrl="jdbc:mysql://localhost:3306/users";
-        Class.forName("com.mysql.cj.jdbc.Driver");
-        try (Connection connection = DriverManager.getConnection(connectionUrl, userName, password);
-             Statement statement = connection.createStatement()) {
-            statement.executeUpdate("create table Users (" +
-                    " id bigint not null," +
-                    " name VARCHAR(30)," +
-                    " surname varchar(30)," +
-                    " primary key (id))");
-        }
+    public static void main(String[] args) {
+        UserServiceImpl userService = new UserServiceImpl();
+        userService.createUsersTable();
+
+        userService.saveUser("Aboba", "Ivanov", (byte) 20);
+        userService.saveUser("Alex", "Zhmyh", (byte) 25);
+        userService.saveUser("Valera", "Albertovich", (byte) 54);
+        userService.saveUser("Denis", "Petrov", (byte) 33);
+
+        System.out.println(userService.getAllUsers());
+
+        userService.cleanUsersTable();
+        userService.dropUsersTable();
+
 
     }
 }
