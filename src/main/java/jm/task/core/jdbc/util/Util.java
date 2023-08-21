@@ -12,7 +12,8 @@ import java.sql.*;
 public class Util {
     private Util (){}
     private static SessionFactory sessionFactory;
-    public static SessionFactory getSessionFactory(String operation) {
+    public static SessionFactory getSessionFactory() {
+        if (sessionFactory == null) {
             try {
                 Configuration configuration = new org.hibernate.cfg.Configuration();
                 Properties settings = new Properties();
@@ -26,7 +27,7 @@ public class Util {
 
                 settings.put(Environment.CURRENT_SESSION_CONTEXT_CLASS, "thread");
 
-                settings.put(Environment.HBM2DDL_AUTO, operation);
+                settings.put(Environment.HBM2DDL_AUTO, "update");
 
                 configuration.setProperties(settings);
 
@@ -41,6 +42,8 @@ public class Util {
             } catch (Exception e) {
                 e.printStackTrace();
             }
+        }
+
         return sessionFactory;
     }
 
