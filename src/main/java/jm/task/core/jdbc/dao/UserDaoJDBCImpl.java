@@ -22,7 +22,7 @@ public class UserDaoJDBCImpl implements UserDao {
     public void saveUser(String name, String lastName, byte age) {
         Util.updateDB(String.format("insert into users(name, surname, age) values ('%s', '%s', '%d');",
                 name, lastName, age));
-        System.out.printf("User с именем - %s добавлен в базу данных \n",
+        System.out.printf("User с именем - %s добавлен в базу данных %n",
                 name);
     }
 

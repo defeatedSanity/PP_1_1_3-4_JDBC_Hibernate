@@ -10,11 +10,6 @@ import java.util.List;
 public class UserDaoHibernateImpl implements UserDao {
     Transaction transaction = null;
 
-    public UserDaoHibernateImpl() {
-
-    }
-
-
     @Override
     public void createUsersTable() {
         try (Session session = Util.getSessionFactory().openSession()) {
@@ -72,8 +67,8 @@ public class UserDaoHibernateImpl implements UserDao {
     }
 
     @Override
-    public List getAllUsers() {
-        List list = null;
+    public List<User> getAllUsers() {
+        List<User> list = null;
         try (Session session = Util.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
             list = session.createQuery("FROM User").list();
