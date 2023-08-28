@@ -6,33 +6,72 @@ import jm.task.core.jdbc.util.Util;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class UserDaoJDBCImpl implements UserDao {
+    private Statement statement;
+
+    public Statement getStatement() {
+        if (statement == null) {
+            try {
+                statement = Objects.requireNonNull(Util.getConnection()).createStatement();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return statement;
+    }
+
+    public ResultSet readDB(String query) {
+        try {
+            return getStatement().executeQuery(query);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+    public void updateDB(String update) {
+        try {
+            getStatement().executeUpdate(update);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+
+    @Override
     public void createUsersTable() {
-        Util.updateDB("create TABLE IF NOT EXISTS users(id BIGINT NOT NULL auto_increment, name CHAR(30) NOT NULL, surname CHAR(30) NOT NULL, age TINYINT, primary key (id))");
+        updateDB("create TABLE " +
+                "IF NOT EXISTS users" +
+                "(id BIGINT NOT NULL auto_increment," +
+                " name CHAR(30) NOT NULL," +
+                " surname CHAR(30) NOT NULL," +
+                " age TINYINT, primary key (id))");
 
     }
-
+    @Override
     public void dropUsersTable() {
-        Util.updateDB("drop table if exists users");
+        updateDB("drop table if exists users");
     }
-
+    @Override
     public void saveUser(String name, String lastName, byte age) {
-        Util.updateDB(String.format("insert into users(name, surname, age) values ('%s', '%s', '%d');",
+        updateDB(String.format("insert into users(name, surname, age) values ('%s', '%s', '%d');",
                 name, lastName, age));
         System.out.printf("User с именем - %s добавлен в базу данных %n",
                 name);
     }
-
+    @Override
     public void removeUserById(long id) {
-        Util.updateDB(String.format("delete from users where id='%d'", id));
+        updateDB(String.format("delete from users where id='%d'", id));
     }
-
+    @Override
     public List<User> getAllUsers() {
         List<User> result = new ArrayList<>();
-        try (ResultSet userSet = Util.readDB("select * from users;");) {
+        try (ResultSet userSet = readDB("select * from users;")) {
             while (userSet.next()) {
                 result.add(new User(
                         userSet.getString(2),
@@ -45,8 +84,8 @@ public class UserDaoJDBCImpl implements UserDao {
         return result;
 
     }
-
+    @Override
     public void cleanUsersTable() {
-        Util.updateDB("delete from users");
+        updateDB("delete from users");
     }
 }
